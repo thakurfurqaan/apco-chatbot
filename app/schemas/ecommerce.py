@@ -1,19 +1,18 @@
 from pydantic import BaseModel
 
 
-class ProductResponse(BaseModel):
+class ProductBase(BaseModel):
     name: str
     description: str
     price: float
-    image: str
 
 
-class ProductRequest(BaseModel):
+class ProductCreate(ProductBase):
     pass
 
 
-class Product(BaseModel):
-    name: str
-    description: str
-    price: float
-    image: str
+class ProductResponse(ProductBase):
+    id: int
+
+    class Config:
+        orm_mode = True

@@ -4,7 +4,7 @@ from app.core.ecommerce_service import EcommerceService
 from app.schemas.ecommerce import Product
 
 
-class EcommerceMock(EcommerceService):
+class EcommerceMockService(EcommerceService):
     async def get_all_products(self) -> List[Product]:
         return [
             Product(
