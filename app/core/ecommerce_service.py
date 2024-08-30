@@ -4,7 +4,7 @@ from typing import List
 from app.models.ecommerce import Product
 
 
-class EcommerceMockService(ABC):
+class EcommerceService(ABC):
     @abstractmethod
     async def get_all_products(self) -> List[Product]:
         pass
