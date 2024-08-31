@@ -4,7 +4,7 @@ from typing import List
 from langchain_core.documents import Document
 
 
-def retriever_formatter(docs: List[Document]):
+def retriever_formatter(docs: List[Document]) -> str:
     formatted_docs = []
     for doc in docs:
         formatted_doc = f"Content: {doc.page_content}\n"

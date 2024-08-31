@@ -17,7 +17,7 @@ from app.services.ai_client.langchain.dependencies.embedding import (
 class LangChainClient(AIClientInterface):
     def __init__(
         self,
-        vector_store: VectorStore = None,
+        vector_store: VectorStore,
         embedding_function: Embeddings = None,
         llm: BaseChatModel = None,
     ):
