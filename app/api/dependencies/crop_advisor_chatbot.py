@@ -1,5 +1,10 @@
+from langchain_chroma import Chroma
+
 from app.api.dependencies.ecommerce_service import get_ecommerce_service
-from app.api.dependencies.product_vector_store import get_product_vector_store
+from app.api.dependencies.product_vector_store import (
+    get_product_vector_store_collection_name,
+    get_product_vector_store_embedding_function,
+)
 from app.core.ai_client import AIClientInterface
 from app.core.chatbot import ChatbotInterface
 from app.core.conversation_manager import ConversationManager
@@ -14,14 +19,16 @@ def get_conversation_manager(
     return ConversationManager(ai_client=ai_client, ecommerce_service=ecommerce_service)
 
 
-def get_retriever():
-    vector_store = get_product_vector_store()
-    retriever = vector_store._vector_store.as_retriever()
-    return retriever
+def get_products_retriever():
+    chroma_db = Chroma(
+        collection_name=get_product_vector_store_collection_name(),
+        embedding_function=get_product_vector_store_embedding_function(),
+    )
+    return chroma_db.as_retriever()
 
 
 def get_ai_client() -> AIClientInterface:
-    retriever = get_retriever()
+    retriever = get_products_retriever()
     client = LangChainClientBuilder().with_retriever(retriever).build()
     return client
 
