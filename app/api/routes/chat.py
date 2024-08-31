@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.api.dependencies.crop_advisor_chatbot import get_crop_advisor_chatbot
-from app.core.chatbot_service import ChatbotInterface
+from app.core.chatbot import ChatbotInterface
 from app.schemas.chat import ChatRequest, ChatResponse
 
 router = APIRouter()

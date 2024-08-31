@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from typing import Any, List
 
 
-class VectorStoreService(ABC):
+class VectorStoreInterface(ABC):
 
     @abstractmethod
     def add_items(self, items: List[Any]):

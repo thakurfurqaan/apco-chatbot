@@ -4,10 +4,10 @@ from langchain_chroma import Chroma
 from langchain_core.embeddings import Embeddings
 
 from app.config import settings
-from app.core.vector_store_service import VectorStoreService
+from app.core.vector_store import VectorStoreInterface
 
 
-class ChromaService(VectorStoreService):
+class ChromaVectorStore(VectorStoreInterface):
     def __init__(self, collection_name: str, embedding_function: Embeddings):
         self.embedding_function = embedding_function
         self.vector_store = Chroma(

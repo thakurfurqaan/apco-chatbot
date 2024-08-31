@@ -1,4 +1,4 @@
-from app.core.chatbot_service import ChatbotInterface
+from app.core.chatbot import ChatbotInterface
 from app.core.conversation_manager import ConversationManager
 
 

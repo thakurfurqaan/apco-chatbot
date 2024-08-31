@@ -1,4 +1,4 @@
-from app.core.ai_service import AIClientInterface
+from app.core.ai_client import AIClientInterface
 from app.core.ecommerce_service import EcommerceServiceInterface
 
 

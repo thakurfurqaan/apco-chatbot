@@ -3,7 +3,7 @@ from langchain_core.language_models import BaseChatModel
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.vectorstores import VectorStore
 
-from app.core.ai_service import AIClientInterface
+from app.core.ai_client import AIClientInterface
 from app.services.ai_client.langchain.dependencies import (
     get_llm,
     get_retriever_formatter,
