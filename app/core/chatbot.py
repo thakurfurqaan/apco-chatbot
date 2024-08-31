@@ -5,9 +5,9 @@ class ChatbotInterface(ABC):
     """AI-powered chatbot."""
 
     @abstractmethod
-    def query(self, query: str):
+    def send_message(self, message: str) -> str:
         pass
 
     @abstractmethod
-    def format_response(self, response: str):
+    def format_response(self, response: str) -> str:
         pass

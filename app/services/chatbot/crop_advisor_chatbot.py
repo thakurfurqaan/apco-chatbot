@@ -8,8 +8,8 @@ class CropAdvisorChatbot(ChatbotInterface):
     def __init__(self, conversation_manager: ConversationManager):
         self.conversation_manager: ConversationManager = conversation_manager
 
-    def query(self, query: str):
-        response = self.conversation_manager.process_text_input(query)
+    def send_message(self, message: str):
+        response = self.conversation_manager.process_text_input(message)
         return self.format_response(response)
 
     def format_response(self, response: str):

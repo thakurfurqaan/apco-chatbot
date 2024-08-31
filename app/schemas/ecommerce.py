@@ -10,5 +10,9 @@ class ProductBase(BaseModel):
     tags: List[str]
 
 
+class Product(ProductBase):
+    pass
+
+
 class ProductResponse(ProductBase):
     pass

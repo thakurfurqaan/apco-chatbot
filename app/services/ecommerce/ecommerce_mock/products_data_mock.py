@@ -57,7 +57,7 @@ products = [
 
 # Add a unique ID to each product
 for product in products:
-    product["id"] = uuid.uuid4()
+    product["id"] = str(uuid.uuid4())
 
 
 def get_all_products():

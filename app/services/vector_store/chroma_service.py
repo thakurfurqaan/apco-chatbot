@@ -19,21 +19,16 @@ class ChromaVectorStore(VectorStoreInterface):
 
     def add_items(self, ids: List[str], contents: List[str], metadatas: List[dict]):
         self.vector_store.add_documents(
-            documents=self._create_documents(ids, contents, metadatas),
+            documents=self._create_documents(ids, contents, metadatas), ids=ids
         )
 
     def _create_documents(
         self, ids: List[str], contents: List[str], metadatas: List[dict]
     ):
         documents = []
-        ids = []
 
         for id, content, metadata in zip(ids, contents, metadatas):
-            document = Document(
-                page_content=content,
-                metadata=metadata,
-                id=id,
-            )
+            document = Document(page_content=content, metadata=metadata, id=id)
             documents.append(document)
         return documents
 
