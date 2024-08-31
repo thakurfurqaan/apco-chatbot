@@ -1,13 +1,13 @@
-from langchain.chains import ConversationalRetrievalChain
-from langchain.embeddings import OpenAIEmbeddings
-from langchain.llms import OpenAI
+from langchain.chains.conversational_retrieval.base import ConversationalRetrievalChain
 from langchain.memory import ConversationBufferMemory
-from langchain.vectorstores import Chroma
+from langchain_chroma import Chroma
+from langchain_openai import OpenAI, OpenAIEmbeddings
 
 from app.config import settings
+from app.core.ai_service import AIService
 
 
-class LangChainService:
+class LangChainOpenAIService(AIService):
     def __init__(self):
         self.llm = OpenAI(openai_api_key=settings.OPENAI_API_KEY)
         self.embeddings = OpenAIEmbeddings(openai_api_key=settings.OPENAI_API_KEY)
@@ -19,6 +19,6 @@ class LangChainService:
             self.llm, self.db.as_retriever(), memory=self.memory
         )
 
-    async def process_prompt(self, prompt: str) -> str:
-        response = await self.qa_chain({"question": prompt})
+    def process_prompt(self, prompt: str) -> str:
+        response = self.qa_chain({"question": prompt})
         return response["answer"]

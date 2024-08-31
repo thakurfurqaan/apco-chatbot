@@ -1,7 +1,7 @@
 import pytest
 
 from app.services.ai.langchain_service import LangChainService
-from app.services.ecommerce.ecommerce_mock import EcommerceMockService
+from app.services.ecommerce.ecommerce_mock.ecommerce_mock import EcommerceMockService
 
 
 @pytest.mark.asyncio
