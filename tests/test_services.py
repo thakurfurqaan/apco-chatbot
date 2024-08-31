@@ -1,6 +1,6 @@
 import pytest
 
-from app.services.ai.langchain_service import LangChainService
+from app.services.ai.langchain.langchain_service import LangChainService
 from app.services.ecommerce.ecommerce_mock.ecommerce_mock import EcommerceMockService
 
 

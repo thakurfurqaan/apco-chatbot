@@ -7,7 +7,7 @@ from app.schemas.chat import ChatRequest, ChatResponse
 router = APIRouter()
 
 
-@router.post("/chat", response_model=ChatResponse)
+@router.post("/chat/products/query", response_model=ChatResponse)
 async def chat(
     request: ChatRequest,
     conversation_manager: ConversationManager = Depends(get_conversation_manager),
