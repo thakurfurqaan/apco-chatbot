@@ -23,11 +23,18 @@ class LangChainClient(AIClientInterface):
         retriever: VectorStoreRetriever,
         embedding_function: Embeddings = None,
         llm: BaseChatModel = None,
+        retriever_formatter=None,
+        prompt_template=None,
+        runnable=None,
+        output_parser=None,
     ):
-        self.llm = llm or get_llm()
-        self.embeddings = embedding_function or get_embedding_function()
-        self.retriever = retriever
-        self.retriever_formatter = get_retriever_formatter()
+        self._llm = llm or get_llm()
+        self._embeddings = embedding_function or get_embedding_function()
+        self._retriever = retriever
+        self._retriever_formatter = retriever_formatter or get_retriever_formatter()
+        self._prompt_template = prompt_template or get_prompt_template()
+        self._runnable = runnable or get_runnable()
+        self._output_parser = output_parser or StrOutputParser()
 
     def generate_response(self, prompt: str) -> str:
         rag_chain = self._get_rag_chain()
@@ -35,18 +42,13 @@ class LangChainClient(AIClientInterface):
         return response
 
     def _get_rag_chain(self) -> str:
-        context = self._construct_context()
-        prompt = self._get_prompt()
         rag_chain = (
-            {"context": context, "question": get_runnable()}
-            | prompt
-            | self.llm
-            | StrOutputParser()
+            {"context": self._construct_context(), "question": self._runnable}
+            | self._prompt_template
+            | self._llm
+            | self._output_parser
         )
         return rag_chain
 
     def _construct_context(self):
-        return self.retriever | self.retriever_formatter
-
-    def _get_prompt(self):
-        return get_prompt_template()
+        return self._retriever | self._retriever_formatter
