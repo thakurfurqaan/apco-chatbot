@@ -29,7 +29,8 @@ def get_conversation_manager(
 
 def get_ai_client() -> AIClientInterface:
     vector_store = get_vector_store()
-    return LangChainClient(vector_store=vector_store)
+    retriever = vector_store._vector_store.as_retriever()
+    return LangChainClient(retriever=retriever)
 
 
 def get_crop_advisor_chatbot() -> ChatbotInterface:
