@@ -4,7 +4,7 @@ from app.core.chatbot import ChatbotInterface
 from app.core.conversation_manager import ConversationManager
 from app.core.ecommerce_service import EcommerceServiceInterface
 from app.core.vector_store import VectorStoreInterface
-from app.services.ai_client.langchain.client import LangChainClient
+from app.services.ai_client.langchain.client import LangChainClientBuilder
 from app.services.ai_client.langchain.dependencies.embedding import (
     get_embedding_function,
 )
@@ -30,7 +30,8 @@ def get_conversation_manager(
 def get_ai_client() -> AIClientInterface:
     vector_store = get_vector_store()
     retriever = vector_store._vector_store.as_retriever()
-    return LangChainClient(retriever=retriever)
+    client = LangChainClientBuilder().with_retriever(retriever).build()
+    return client
 
 
 def get_crop_advisor_chatbot() -> ChatbotInterface:
