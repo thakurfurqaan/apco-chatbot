@@ -11,7 +11,6 @@ app.include_router(chat.router)
 app.include_router(ecommerce.router)
 
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
 templates = Jinja2Templates(directory="app/templates")
 
 
