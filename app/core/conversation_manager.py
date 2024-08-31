@@ -16,4 +16,4 @@ class ConversationManager:
         return self._format_response(response)
 
     def _format_response(self, response: str) -> str:
-        return response.strip().replace("*", "")
+        return response
