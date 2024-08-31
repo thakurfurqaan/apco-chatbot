@@ -137,3 +137,6 @@ static/rest_framework
 thrash
 wslvenv
 data/
+
+
+*.svg
