@@ -5,7 +5,7 @@ from typing import Any, List
 class VectorStoreInterface(ABC):
 
     @abstractmethod
-    def add_items(self, items: List[Any]):
+    def add_items(self, ids: List[str], contents: List[str], metadatas: List[dict]):
         pass
 
     @abstractmethod
@@ -13,9 +13,9 @@ class VectorStoreInterface(ABC):
         pass
 
     @abstractmethod
-    def delete_items(self, items: List[Any]):
+    def delete_items(self, ids: List[str]):
         pass
 
     @abstractmethod
-    def update_items(self, items: List[Any]):
+    def update_items(self, ids: List[str], contents: List[str], metadatas: List[dict]):
         pass

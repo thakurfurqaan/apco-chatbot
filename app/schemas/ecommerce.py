@@ -1,18 +1,14 @@
+from typing import List
+
 from pydantic import BaseModel
 
 
 class ProductBase(BaseModel):
+    id: str
     name: str
     description: str
-    price: float
-
-
-class ProductCreate(ProductBase):
-    pass
+    tags: List[str]
 
 
 class ProductResponse(ProductBase):
-    id: int
-
-    class Config:
-        from_attributes = True
+    pass

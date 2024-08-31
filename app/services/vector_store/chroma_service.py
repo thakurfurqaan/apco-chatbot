@@ -1,6 +1,7 @@
 from typing import Any, List
 
 from langchain_chroma import Chroma
+from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 
 from app.config import settings
@@ -16,23 +17,34 @@ class ChromaVectorStore(VectorStoreInterface):
             persist_directory=settings.CHROMA_DB_PATH,
         )
 
-    def add_items(self, items: List[Any]):
+    def add_items(self, ids: List[str], contents: List[str], metadatas: List[dict]):
         self.vector_store.add_documents(
-            documents=items,
-            ids=[str(item.id) for item in items],
+            documents=self._create_documents(ids, contents, metadatas),
         )
+
+    def _create_documents(
+        self, ids: List[str], contents: List[str], metadatas: List[dict]
+    ):
+        documents = []
+        ids = []
+
+        for id, content, metadata in zip(ids, contents, metadatas):
+            document = Document(
+                page_content=content,
+                metadata=metadata,
+                id=id,
+            )
+            documents.append(document)
+        return documents
 
     def query_items(self, query: str, n_results: int = 5) -> List[Any]:
         return self.vector_store.similarity_search(query, n_results)
 
-    def delete_items(self, items: List[Any]):
-        self.vector_store.delete_documents(
-            documents=items,
-            ids=[str(item.id) for item in items],
-        )
+    def delete_items(self, ids: List[str]):
+        self.vector_store.delete(ids=ids)
 
-    def update_items(self, items: List[Any]):
+    def update_items(self, ids: List[str], contents: List[str], metadatas: List[dict]):
         self.vector_store.update_documents(
-            documents=items,
-            ids=[str(item.id) for item in items],
+            documents=self._create_documents(ids, contents, metadatas),
+            ids=ids,
         )
