@@ -1,12 +1,16 @@
-from app.core.ai_service import AIService
-from app.core.chatbot_service import ChatbotService
+from app.core.chatbot_service import ChatbotInterface
+from app.core.conversation_manager import ConversationManager
 
 
-class CropAdvisorChatbot(ChatbotService):
+class CropAdvisorChatbot(ChatbotInterface):
     """AI-powered chatbot for diagnosing and treating crop diseases and suggesting relevant products."""
 
-    def __init__(self, ai_service: AIService):
-        self.ai_service: AIService = ai_service
+    def __init__(self, conversation_manager: ConversationManager):
+        self.conversation_manager: ConversationManager = conversation_manager
 
     def query(self, query: str):
-        return self.ai_service.process_prompt(query)
+        response = self.conversation_manager.process_text_input(query)
+        return self.format_response(response)
+
+    def format_response(self, response: str):
+        return response

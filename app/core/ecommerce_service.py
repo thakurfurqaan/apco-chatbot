@@ -4,7 +4,7 @@ from typing import List
 from app.models.ecommerce import Product
 
 
-class EcommerceService(ABC):
+class EcommerceServiceInterface(ABC):
     """Interface for E-commerce service."""
 
     @abstractmethod

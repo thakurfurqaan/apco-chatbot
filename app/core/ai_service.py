@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
 
-class AIService(ABC):
+class AIClientInterface(ABC):
     @abstractmethod
-    def process_prompt(self, prompt: str) -> str:
+    def generate_response(self, prompt: str) -> str:
         pass

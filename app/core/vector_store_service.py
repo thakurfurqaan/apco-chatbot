@@ -5,7 +5,7 @@ from typing import Any, List
 class VectorStoreService(ABC):
 
     @abstractmethod
-    def add_item(self, item: Any):
+    def add_items(self, items: List[Any]):
         pass
 
     @abstractmethod
@@ -13,9 +13,9 @@ class VectorStoreService(ABC):
         pass
 
     @abstractmethod
-    def delete_item(self, item: Any):
+    def delete_items(self, items: List[Any]):
         pass
 
     @abstractmethod
-    def update_item(self, item: Any):
+    def update_items(self, items: List[Any]):
         pass

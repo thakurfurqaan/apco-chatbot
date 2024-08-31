@@ -1,16 +1,16 @@
 from fastapi import APIRouter, Depends
 
-from app.api.dependencies import get_conversation_manager
-from app.core.conversation_manager import ConversationManager
+from app.api.dependencies.crop_advisor_chatbot import get_crop_advisor_chatbot
+from app.core.chatbot_service import ChatbotInterface
 from app.schemas.chat import ChatRequest, ChatResponse
 
 router = APIRouter()
 
 
-@router.post("/chat/products/query", response_model=ChatResponse)
+@router.post("/chat", response_model=ChatResponse)
 async def chat(
     request: ChatRequest,
-    conversation_manager: ConversationManager = Depends(get_conversation_manager),
+    chatbot: ChatbotInterface = Depends(get_crop_advisor_chatbot),
 ):
-    response = conversation_manager.send_message(request.message)
-    return ChatResponse(message=response)
+    message = chatbot.query(request.message)
+    return ChatResponse(message=message)
