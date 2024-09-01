@@ -19,7 +19,7 @@ from app.services.ai_client.langchain.client import (
 from app.services.ai_client.langchain.formatters import default_retriever_formatter
 from app.services.chatbot.crop_advisor_chatbot import CropAdvisorChatbot
 from app.services.ecommerce.ecommerce_mock.ecommerce_mock import EcommerceMockService
-from app.services.vector_store.chroma_vector_store import ChromaVectorStore
+from app.services.vector_store.langchain_chroma_vector_store import LangChainChromaVS
 
 
 class Container(containers.DeclarativeContainer):
@@ -83,7 +83,7 @@ class Container(containers.DeclarativeContainer):
 
     # Vector store
     product_vector_store = providers.Singleton(
-        ChromaVectorStore,
+        LangChainChromaVS,
         collection_name=config.PRODUCT_VECTOR_STORE_COLLECTION_NAME,
         embedding_function=embedding_function,
         persist_directory=config.CHROMA_DB_PATH,
