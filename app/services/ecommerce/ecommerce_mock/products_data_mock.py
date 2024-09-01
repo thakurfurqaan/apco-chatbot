@@ -2,8 +2,8 @@
 products = [
     {
         "name": "FungaShield",
-        "description": "little-spectrum fungicide for various crops",
-        "tags": ["fungicide", "little-spectrum", "protective"],
+        "description": "broad-spectrum fungicide for various crops",
+        "tags": ["fungicide", "broad-spectrum", "protective"],
         "id": "f29ba6d1-a0c7-429e-93fa-138ef72500f5",
     },
     {
