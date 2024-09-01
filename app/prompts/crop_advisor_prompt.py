@@ -5,8 +5,6 @@ Context (Product Information):
 
 User Input: {question}
 
-Provide a brief of what exactly the disease / pest is and what are the symptoms.
-
 Based on the user's input and the provided context, please recommend the top 3 most suitable products. For each product, provide:
 1. Product Name
 2. Brief Description (1-2 sentences)
@@ -14,6 +12,10 @@ Based on the user's input and the provided context, please recommend the top 3 m
 4. Usage Instructions (1-2 sentences)
 
 Your response should be in the following format:
+
+Provide a brief of what exactly the disease / pest is and what are the symptoms.
+
+DO NOT RECOMMEND ANY PRODUCTS THAT ARE NOT MENTIONED IN THE CONTEXT.
 
 Recommendation 1: 
 - Product Name: [Name]
