@@ -85,7 +85,7 @@ class Container(containers.DeclarativeContainer):
     product_vector_store = providers.Singleton(
         LangChainChromaVS,
         collection_name=config.PRODUCT_VECTOR_STORE_COLLECTION_NAME,
-        embedding_function=embedding_function,
+        embedding_function=embedding_function,  # Same embedding function as the one used for the RAG chain
         persist_directory=config.CHROMA_DB_PATH,
     )
 
@@ -100,6 +100,6 @@ class Container(containers.DeclarativeContainer):
     )
 
     # Crop advisor chatbot
-    crop_advisor_chatbot = providers.Singleton(
+    crop_disease_chatbot = providers.Singleton(
         CropAdvisorChatbot, conversation_manager=conversation_manager
     )

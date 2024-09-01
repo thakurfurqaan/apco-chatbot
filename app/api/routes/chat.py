@@ -17,7 +17,7 @@ def response_formatter(response: str):
 @inject
 def chat(
     request: ChatRequest,
-    chatbot: ChatbotInterface = Depends(Provide[Container.crop_advisor_chatbot]),
+    chatbot: ChatbotInterface = Depends(Provide[Container.crop_disease_chatbot]),
 ):
     """
     Send a message to the chatbot and get a response.
@@ -31,7 +31,7 @@ def chat(
 @inject
 async def analyze_image(
     file: UploadFile = File(...),
-    chatbot: ChatbotInterface = Depends(Provide[Container.crop_advisor_chatbot]),
+    chatbot: ChatbotInterface = Depends(Provide[Container.crop_disease_chatbot]),
 ):
     contents = await file.read()
     # Process the image using your chatbot's image analysis capabilities
