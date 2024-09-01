@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, File, UploadFile
 
 from app.api.dependencies.containers import Container
 from app.core.chatbot import ChatbotInterface
+from app.core.image_recognizer_service import ImageRecognizer
 from app.schemas.chat import ChatRequest, ChatResponse
 
 router = APIRouter()
@@ -31,9 +32,8 @@ def chat(
 @inject
 async def analyze_image(
     file: UploadFile = File(...),
-    chatbot: ChatbotInterface = Depends(Provide[Container.crop_disease_chatbot]),
+    image_recognizer: ImageRecognizer = Depends(Provide[Container.image_recognizer]),
 ):
     contents = await file.read()
-    # Process the image using your chatbot's image analysis capabilities
-    # response = chatbot.analyze_image(contents)
-    return {"message": "Image uploaded successfully"}
+    response = image_recognizer.recognize(image_data=contents)
+    return {"message": response}
