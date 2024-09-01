@@ -20,6 +20,7 @@ from app.services.ai_client.langchain.client import (
 from app.services.ai_client.langchain.formatters import default_retriever_formatter
 from app.services.chatbot.crop_advisor_chatbot import CropAdvisorChatbot
 from app.services.ecommerce.ecommerce_mock.ecommerce_mock import EcommerceMockService
+from app.services.image_analyzer.image_analyzer_service import ImageAnalyzerService
 from app.services.image_processor.base64_image_processor import Base64ImageProcessor
 from app.services.image_recognizer.image_recognizer import (
     ImageRecognizerRAGChainCreator,
@@ -127,4 +128,11 @@ class Container(containers.DeclarativeContainer):
     image_recognizer = providers.Singleton(
         LangChainImageRecognizer,
         rag_chain_creator=image_recognizer_rag_chain_creator,
+    )
+
+    # Image Analyzer
+    image_analyzer = providers.Factory(
+        ImageAnalyzerService,
+        image_processor=image_processor,
+        image_recognizer=image_recognizer,
     )
