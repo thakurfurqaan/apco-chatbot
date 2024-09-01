@@ -165,6 +165,25 @@
         transform: rotate(360deg);
       }
     }
+
+    #image-preview {
+      display: none;
+      width: 100px;
+      height: 100px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 2px solid #ffffff;
+      margin-bottom: 10px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .image-preview-container {
+      position: absolute;
+      bottom: 100%;
+      left: 50%;
+      transform: translateX(-50%);
+      margin-bottom: 10px;
+    }
   </style>
 </head>
 
@@ -191,6 +210,9 @@
           <form id="chat-form" class="mb-3">
             <div class="container">
               <div class="row justify-content-center align-items-center">
+                <div class="image-preview-container">
+                  <img id="image-preview" src="" alt="Image preview">
+                </div>
                 <div class="col-auto">
                   <label for="file-input" id="file-input-label">
                     <i class="fas fa-paperclip fa-lg" style="color: white;"></i>
@@ -228,6 +250,23 @@
   const chatMessages = document.getElementById("chat-messages");
   const syncProductsButton = document.getElementById("sync-products");
 
+  const imagePreview = document.getElementById("image-preview");
+
+  fileInput.addEventListener("change", (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        imagePreview.src = e.target.result;
+        imagePreview.style.display = "block";
+      };
+      reader.readAsDataURL(file);
+    } else {
+      imagePreview.style.display = "none";
+      imagePreview.src = "";
+    }
+  });
+
   chatForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const message = userInput.value.trim();
@@ -245,6 +284,8 @@
       appendMessage("Bot", response.message, "bot-message");
       document.getElementById("loading-indicator").style.display = "none";
       toggleInputs(false);
+      imagePreview.style.display = "none";
+      imagePreview.src = "";
     }
   });
 
