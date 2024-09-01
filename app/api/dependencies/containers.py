@@ -1,3 +1,5 @@
+import logging
+
 from dependency_injector import containers, providers
 from langchain.prompts import ChatPromptTemplate
 from langchain_chroma import Chroma
@@ -35,6 +37,11 @@ class Container(containers.DeclarativeContainer):
     config = providers.Configuration()
     json_config = settings.model_dump(mode="json")
     config.from_dict(json_config)
+
+    logger = providers.Singleton(
+        logging.getLogger,
+        name=config.logger_name,
+    )
 
     # Langchain dependencies
     embedding_function: providers.Provider[Embeddings] = providers.Factory(
