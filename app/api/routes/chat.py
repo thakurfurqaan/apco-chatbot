@@ -20,7 +20,7 @@ def response_formatter(response: str):
 @inject
 async def chat(
     message: Annotated[str, Form()],
-    file: UploadFile = File(...),
+    file: UploadFile = File(None),
     chatbot: ChatbotInterface = Depends(Provide[Container.crop_disease_chatbot]),
     image_analyzer: ImageAnalyzerInterface = Depends(Provide[Container.image_analyzer]),
 ):
