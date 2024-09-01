@@ -8,6 +8,10 @@ from app.core.ai_client import AIClientInterface, ContextConstructor, RAGChainCr
 
 
 class DefaultContextConstructor(ContextConstructor):
+    """
+    Default context constructor for the LangChain AI client.
+    """
+
     def __init__(self, vector_store: VectorStore, retriever_formatter):
         self._vector_store = vector_store
         self._retriever_formatter = retriever_formatter
@@ -17,6 +21,10 @@ class DefaultContextConstructor(ContextConstructor):
 
 
 class DefaultRAGChainCreator(RAGChainCreator):
+    """
+    Default RAG chain creator for the LangChain AI client.
+    """
+
     def __init__(
         self,
         context_constructor: ContextConstructor,

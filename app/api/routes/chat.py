@@ -3,6 +3,7 @@ from fastapi import APIRouter, Depends, File, UploadFile
 
 from app.api.dependencies.containers import Container
 from app.core.chatbot import ChatbotInterface
+from app.core.image_processor import ImageProcessorInterface
 from app.core.image_recognizer_service import ImageRecognizer
 from app.schemas.chat import ChatRequest, ChatResponse
 
@@ -33,7 +34,10 @@ def chat(
 async def analyze_image(
     file: UploadFile = File(...),
     image_recognizer: ImageRecognizer = Depends(Provide[Container.image_recognizer]),
+    image_processor: ImageProcessorInterface = Depends(
+        Provide[Container.image_processor]
+    ),
 ):
-    contents = await file.read()
-    response = image_recognizer.recognize(image_data=contents)
+    data_url = await image_processor.get_data_url(file)
+    response = image_recognizer.recognize(image_url=data_url)
     return {"message": response}

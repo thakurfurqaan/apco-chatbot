@@ -1,7 +1,20 @@
 system_prompt = """
-    You are an expert image recognizer. Your task is to recognize the image and return the most relevant information.
+    You are an expert image recognizer. 
+    
+    Your task is to recognize the image and return the most relevant information. 
+    
+    Cover every little detail given in the image in your response.
 """
 
-
-def get_image_recognizer_system_prompt() -> str:
-    return system_prompt
+image_recognizer_prompt_template = [
+    ("system", system_prompt),
+    (
+        "user",
+        [
+            {
+                "type": "image_url",
+                "image_url": {"url": "{image_url}"},
+            }
+        ],
+    ),
+]

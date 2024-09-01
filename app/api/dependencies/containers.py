@@ -11,9 +11,7 @@ from app.config import settings
 from app.core.ai_client import AIClientInterface
 from app.core.conversation_manager import ConversationManager
 from app.prompts.crop_advisor_prompt import template
-from app.prompts.image_recognizer_system_prompt import (
-    get_image_recognizer_system_prompt,
-)
+from app.prompts.image_recognizer_system_prompt import image_recognizer_prompt_template
 from app.services.ai_client.langchain.client import (
     DefaultContextConstructor,
     DefaultRAGChainCreator,
@@ -22,7 +20,11 @@ from app.services.ai_client.langchain.client import (
 from app.services.ai_client.langchain.formatters import default_retriever_formatter
 from app.services.chatbot.crop_advisor_chatbot import CropAdvisorChatbot
 from app.services.ecommerce.ecommerce_mock.ecommerce_mock import EcommerceMockService
-from app.services.image_recognizer.image_recognizer import GPT4Image
+from app.services.image_processor.base64_image_processor import Base64ImageProcessor
+from app.services.image_recognizer.image_recognizer import (
+    ImageRecognizerRAGChainCreator,
+    LangChainImageRecognizer,
+)
 from app.services.vector_store.langchain_chroma_vector_store import LangChainChromaVS
 
 
@@ -108,10 +110,21 @@ class Container(containers.DeclarativeContainer):
         CropAdvisorChatbot, conversation_manager=conversation_manager
     )
 
+    # Image Processor
+    image_processor = providers.Factory(Base64ImageProcessor)
+
     # Image recognizer
-    image_recognizer_system_prompt = providers.Object(
-        get_image_recognizer_system_prompt
+    image_recognizer_prompt_template = providers.Factory(
+        ChatPromptTemplate.from_messages,
+        messages=image_recognizer_prompt_template,
+    )
+    image_recognizer_rag_chain_creator = providers.Factory(
+        ImageRecognizerRAGChainCreator,
+        llm=llm,
+        prompt_template=image_recognizer_prompt_template,
+        output_parser=output_parser,
     )
     image_recognizer = providers.Singleton(
-        GPT4Image, system_prompt=image_recognizer_system_prompt
+        LangChainImageRecognizer,
+        rag_chain_creator=image_recognizer_rag_chain_creator,
     )

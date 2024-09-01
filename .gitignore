@@ -141,3 +141,4 @@ data/
 
 *.svg
 chroma_db/*
+.DS_Store
