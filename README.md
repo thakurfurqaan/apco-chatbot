@@ -1,4 +1,7 @@
 
+## Try it out
+- Go to [APCO Chatbot Demo](https://tinyurl.com/apco-furqaan) to try out the chatbot.
+
 ## Run locally
 1. Clone the repository
 2. Create a virtual environment: `python -m venv venv`
@@ -11,5 +14,4 @@
 
 
 ### NOTES:
-- I committed the `.env` file to git only for ease of setup at your end.
-- You can find the question in the `question` directory.
+- You can find the question in the `question.py` file.
