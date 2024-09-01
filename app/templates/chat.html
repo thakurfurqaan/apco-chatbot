@@ -93,6 +93,9 @@
       
         <div class="chat-input">
             <form id="chat-form" class="mb-3">
+              <div class="input-group mb-3">
+                <input type="file" id="file-input" class="form-control" accept="image/*">
+            </div>
             <div class="input-group">
                 <input
                 type="text"
@@ -114,21 +117,26 @@
     <script>
       const chatForm = document.getElementById("chat-form");
       const userInput = document.getElementById("user-input");
+      const fileInput = document.getElementById("file-input");
       const chatMessages = document.getElementById("chat-messages");
-      const imageUploadForm = document.getElementById("image-upload-form");
       const syncProductsButton = document.getElementById("sync-products");
-
+    
       chatForm.addEventListener("submit", async (e) => {
         e.preventDefault();
         const message = userInput.value.trim();
-        if (message) {
+        const file = fileInput.files[0];
+        if (message || file) {
           appendMessage("You", message, "user-message");
+          if (file) {
+            appendMessage("You", `Uploaded file: ${file.name}`, "user-message");
+          }
           userInput.value = "";
-          const response = await sendMessage(message);
+          fileInput.value = "";
+          const response = await sendMessage(message, file);
           appendMessage("Bot", response.message, "bot-message");
         }
       });
-
+    
       syncProductsButton.addEventListener("click", async () => {
         try {
           const response = await fetch("/products/sync", { method: "POST" });
@@ -138,18 +146,21 @@
           alert("Error syncing products");
         }
       });
-
-      async function sendMessage(message) {
+    
+      async function sendMessage(message, file) {
+        const formData = new FormData();
+        formData.append("message", message);
+        if (file) {
+          formData.append("file", file);
+        }
+    
         const response = await fetch("/chat", {
           method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ message }),
+          body: formData,
         });
         return response.json();
       }
-
+    
       function appendMessage(sender, message, className) {
         const messageElement = document.createElement("div");
         messageElement.className = `message ${className}`;
@@ -157,7 +168,7 @@
         chatMessages.appendChild(messageElement);
         chatMessages.scrollTop = chatMessages.scrollHeight;
       }
-
+    
       function formatToHTML(text) {
         text = text.replace(/^###\s*(.*$)/gm, '<h3>$1</h3>');
         text = text.replace(/\*\*\*(.*?)\*\*\*/g, '<strong><em>$1</em></strong>');
@@ -165,8 +176,7 @@
         text = text.replace(/\*(.*?)\*/g, '<em>$1</em>');
         text = text.replace(/\n/g, '<br>');
         return text;
-    }
-
+      }
     </script>
-  </body>
+    </body>
 </html>

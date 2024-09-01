@@ -1,10 +1,10 @@
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, File, UploadFile
 
 from app.api.dependencies.containers import Container
 from app.core.chatbot import ChatbotInterface
 from app.core.image_analyzer import ImageAnalyzerInterface
-from app.schemas.chat import ChatRequest, ChatResponse, ImageAnalysisRequest
+from app.schemas.chat import ChatRequest, ChatResponse, ImageAnalysisResponse
 
 router = APIRouter()
 
@@ -33,11 +33,11 @@ def chat(
     return ChatResponse(message=formatted_response)
 
 
-@router.post("/chat/analyze-image")
+@router.post("/chat/analyze-image", response_model=ImageAnalysisResponse)
 @inject
 async def analyze_image(
-    request: ImageAnalysisRequest,
+    file: UploadFile = File(...),
     image_analyzer: ImageAnalyzerInterface = Depends(Provide[Container.image_analyzer]),
 ):
-    response = image_analyzer.analyze(request.file)
-    return {"description": response}
+    response = await image_analyzer.analyze(file)
+    return ImageAnalysisResponse(description=response)

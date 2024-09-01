@@ -7,6 +7,6 @@ class ImageAnalyzerInterface(ABC):
     """Interface for image analyzer."""
 
     @abstractmethod
-    def analyze(self, file: UploadFile) -> str:
+    async def analyze(self, file: UploadFile) -> str:
         """Analyze the given image file and return a string description."""
         pass

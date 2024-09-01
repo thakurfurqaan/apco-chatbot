@@ -1,6 +1,6 @@
 from typing import Optional
 
-from fastapi import UploadFile
+from fastapi import File, UploadFile
 from pydantic import BaseModel
 
 
@@ -14,7 +14,7 @@ class ChatResponse(BaseModel):
 
 
 class ImageAnalysisRequest(BaseModel):
-    file: UploadFile
+    file: UploadFile = File(...)
 
 
 class ImageAnalysisResponse(BaseModel):

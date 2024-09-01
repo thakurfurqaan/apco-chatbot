@@ -14,6 +14,6 @@ class ImageAnalyzerService(ImageAnalyzerInterface):
         self.image_processor = image_processor
         self.image_recognizer = image_recognizer
 
-    def analyze(self, file: UploadFile) -> str:
-        data_url = self.image_processor.get_data_url(file)
+    async def analyze(self, file: UploadFile) -> str:
+        data_url = await self.image_processor.get_data_url(file)
         return self.image_recognizer.recognize(image_url=data_url)
