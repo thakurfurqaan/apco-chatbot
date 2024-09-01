@@ -5,7 +5,6 @@ from langchain_core.embeddings import Embeddings
 from langchain_core.language_models import BaseChatModel
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.runnables import RunnablePassthrough
-from langchain_core.vectorstores import VectorStore
 from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 
 from app.config import settings
@@ -21,7 +20,8 @@ from app.services.vector_store.chroma_vector_store import ChromaVectorStore
 
 class Container(containers.DeclarativeContainer):
     config = providers.Configuration()
-    config.from_pydantic(settings)
+    json_config = settings.model_dump(mode="json")
+    config.from_dict(json_config)
 
     # Langchain dependencies
     embedding_function: providers.Provider[Embeddings] = providers.Factory(
@@ -48,7 +48,7 @@ class Container(containers.DeclarativeContainer):
 
     output_parser = providers.Factory(StrOutputParser)
 
-    langchain_product_vector_store: VectorStore = providers.Singleton(
+    langchain_product_vector_store = providers.Singleton(
         Chroma,
         collection_name=config.PRODUCT_VECTOR_STORE_COLLECTION_NAME,
         embedding_function=embedding_function,
@@ -67,15 +67,20 @@ class Container(containers.DeclarativeContainer):
     ecommerce_service = providers.Singleton(EcommerceMockService)
 
     # AI client
+    def build_langchain_client(pvs, rf, l, pt, r, op):
+        return (
+            LangChainClientBuilder()
+            .with_retriever(pvs.as_retriever())
+            .with_retriever_formatter(rf)
+            .with_prompt_template(pt)
+            .with_llm(l)
+            .with_runnable(r)
+            .with_output_parser(op)
+            .build()
+        )
+
     ai_client: providers.Provider[AIClientInterface] = providers.Factory(
-        lambda pvs, rf, l, pt, r, op: LangChainClientBuilder()
-        .with_retriever(pvs.as_retriever())
-        .with_retriever_formatter(rf)
-        .with_llm(l)
-        .with_prompt_template(pt)
-        .with_runnable(r)
-        .with_output_parser(op)
-        .build(),
+        build_langchain_client,
         pvs=langchain_product_vector_store,
         rf=retriever_formatter,
         l=llm,
@@ -85,9 +90,11 @@ class Container(containers.DeclarativeContainer):
     )
 
     # Conversation manager
-    conversation_manager = providers.Factory(ConversationManager, ai_client=ai_client)
+    conversation_manager = providers.Singleton(
+        ConversationManager, ai_client=ai_client, ecommerce_service=ecommerce_service
+    )
 
     # Crop advisor chatbot
-    crop_advisor_chatbot = providers.Factory(
+    crop_advisor_chatbot = providers.Singleton(
         CropAdvisorChatbot, conversation_manager=conversation_manager
     )

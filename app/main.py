@@ -10,6 +10,7 @@ templates = Jinja2Templates(directory="app/templates")
 
 def create_app() -> FastAPI:
     container = Container()
+    container.wire(modules=[ecommerce, chat])
     app = FastAPI()
     app.container = container
     app.include_router(chat.router)

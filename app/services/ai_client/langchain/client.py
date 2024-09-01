@@ -1,8 +1,6 @@
 from typing import Callable
 
-from langchain_core.embeddings import Embeddings
 from langchain_core.language_models import BaseChatModel
-from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.vectorstores import VectorStoreRetriever
 
@@ -24,7 +22,7 @@ class DefaultRAGChainCreator(RAGChainCreator):
         context_constructor: ContextConstructor,
         llm: BaseChatModel,
         prompt_template,
-        output_parser: StrOutputParser,
+        output_parser,
         runnable,
     ):
         self._context_constructor = context_constructor
@@ -56,14 +54,13 @@ class LangChainClient(AIClientInterface):
 
     def generate_response(self, prompt: str) -> str:
         rag_chain = self._rag_chain_creator.create_rag_chain()
-        response = rag_chain.invoke(prompt)
+        response = rag_chain.invoke(str(prompt))
         return response
 
 
 class LangChainClientBuilder:
     def __init__(self):
         self._retriever: VectorStoreRetriever = None
-        self._embedding_function: Embeddings = None
         self._llm: BaseChatModel = None
         self._retriever_formatter: Callable = None
         self._prompt_template: ChatPromptTemplate = None
@@ -72,10 +69,6 @@ class LangChainClientBuilder:
 
     def with_retriever(self, retriever):
         self._retriever = retriever
-        return self
-
-    def with_embedding_function(self, embedding_function):
-        self._embedding_function = embedding_function
         return self
 
     def with_llm(self, llm):
@@ -101,14 +94,14 @@ class LangChainClientBuilder:
     def build(self):
 
         context_constructor = DefaultContextConstructor(
-            self._retriever, self._retriever_formatter
+            retriever=self._retriever, retriever_formatter=self._retriever_formatter
         )
         rag_chain_creator = DefaultRAGChainCreator(
-            context_constructor,
-            self._runnable,
-            self._prompt_template,
-            self._llm,
-            self._output_parser,
+            context_constructor=context_constructor,
+            runnable=self._runnable,
+            prompt_template=self._prompt_template,
+            llm=self._llm,
+            output_parser=self._output_parser,
         )
 
         return LangChainClient(context_constructor, rag_chain_creator)

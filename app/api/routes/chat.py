@@ -15,7 +15,7 @@ def response_formatter(response: str):
 
 @router.post("/chat", response_model=ChatResponse)
 @inject
-async def chat(
+def chat(
     request: ChatRequest,
     chatbot: ChatbotInterface = Depends(Provide[Container.crop_advisor_chatbot]),
 ):
