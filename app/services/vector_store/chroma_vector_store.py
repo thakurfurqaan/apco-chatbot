@@ -4,17 +4,21 @@ from langchain_chroma import Chroma
 from langchain_core.documents import Document
 from langchain_core.embeddings import Embeddings
 
-from app.config import settings
 from app.core.vector_store import VectorStoreInterface
 
 
 class ChromaVectorStore(VectorStoreInterface):
-    def __init__(self, collection_name: str, embedding_function: Embeddings):
+    def __init__(
+        self,
+        collection_name: str,
+        embedding_function: Embeddings,
+        persist_directory: str,
+    ):
         self._embedding_function = embedding_function
         self._vector_store = Chroma(
             collection_name=collection_name,
             embedding_function=self._embedding_function,
-            persist_directory=settings.CHROMA_DB_PATH,
+            persist_directory=persist_directory,
         )
 
     def add_items(self, ids: List[str], contents: List[str], metadatas: List[dict]):

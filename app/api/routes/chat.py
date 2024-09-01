@@ -1,6 +1,7 @@
+from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, File, UploadFile
 
-from app.api.dependencies.crop_advisor_chatbot import get_crop_advisor_chatbot
+from app.api.dependencies.containers import Container
 from app.core.chatbot import ChatbotInterface
 from app.schemas.chat import ChatRequest, ChatResponse
 
@@ -13,9 +14,10 @@ def response_formatter(response: str):
 
 
 @router.post("/chat", response_model=ChatResponse)
+@inject
 async def chat(
     request: ChatRequest,
-    chatbot: ChatbotInterface = Depends(get_crop_advisor_chatbot),
+    chatbot: ChatbotInterface = Depends(Provide[Container.crop_advisor_chatbot]),
 ):
     response = chatbot.send_message(request.message)
     formatted_response = response_formatter(response)
@@ -23,11 +25,12 @@ async def chat(
 
 
 @router.post("/chat/upload-image")
+@inject
 async def upload_image(
     file: UploadFile = File(...),
-    chatbot: ChatbotInterface = Depends(get_crop_advisor_chatbot),
+    chatbot: ChatbotInterface = Depends(Provide[Container.crop_advisor_chatbot]),
 ):
     contents = await file.read()
     # Process the image using your chatbot's image analysis capabilities
-    response = chatbot.analyze_image(contents)
-    return {"message": response}
+    # response = chatbot.analyze_image(contents)
+    return {"message": "Image uploaded successfully"}

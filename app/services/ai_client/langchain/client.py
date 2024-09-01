@@ -1,19 +1,12 @@
+from typing import Callable
+
+from langchain_core.embeddings import Embeddings
 from langchain_core.language_models import BaseChatModel
 from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
 from langchain_core.vectorstores import VectorStoreRetriever
 
 from app.core.ai_client import AIClientInterface, ContextConstructor, RAGChainCreator
-from app.services.ai_client.langchain.dependencies import (
-    get_llm,
-    get_retriever_formatter,
-    get_runnable,
-)
-from app.services.ai_client.langchain.dependencies.embedding import (
-    get_embedding_function,
-)
-from app.services.ai_client.langchain.dependencies.prompt_template import (
-    get_prompt_template,
-)
 
 
 class DefaultContextConstructor(ContextConstructor):
@@ -69,11 +62,11 @@ class LangChainClient(AIClientInterface):
 
 class LangChainClientBuilder:
     def __init__(self):
-        self._retriever = None
-        self._embedding_function = None
-        self._llm = None
-        self._retriever_formatter = None
-        self._prompt_template = None
+        self._retriever: VectorStoreRetriever = None
+        self._embedding_function: Embeddings = None
+        self._llm: BaseChatModel = None
+        self._retriever_formatter: Callable = None
+        self._prompt_template: ChatPromptTemplate = None
         self._runnable = None
         self._output_parser = None
 
@@ -106,14 +99,6 @@ class LangChainClientBuilder:
         return self
 
     def build(self):
-        self._llm = self._llm or get_llm()
-        self._embedding_function = self._embedding_function or get_embedding_function()
-        self._retriever_formatter = (
-            self._retriever_formatter or get_retriever_formatter()
-        )
-        self._prompt_template = self._prompt_template or get_prompt_template()
-        self._runnable = self._runnable or get_runnable()
-        self._output_parser = self._output_parser or StrOutputParser()
 
         context_constructor = DefaultContextConstructor(
             self._retriever, self._retriever_formatter

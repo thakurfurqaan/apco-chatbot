@@ -1,9 +1,9 @@
 from typing import List
 
+from dependency_injector.wiring import Provide, inject
 from fastapi import APIRouter, Depends, HTTPException
 
-from app.api.dependencies.ecommerce_service import get_ecommerce_service
-from app.api.dependencies.product_vector_store import get_product_vector_store
+from app.api.dependencies.containers import Container
 from app.core.ecommerce_service import EcommerceServiceInterface
 from app.core.vector_store import VectorStoreInterface
 from app.schemas.ecommerce import ProductResponse
@@ -12,9 +12,14 @@ router = APIRouter()
 
 
 @router.post("/products/sync")
+@inject
 async def sync_products_vector_store(
-    ecommerce_service: EcommerceServiceInterface = Depends(get_ecommerce_service),
-    vector_store: VectorStoreInterface = Depends(get_product_vector_store),
+    ecommerce_service: EcommerceServiceInterface = Depends(
+        Provide[Container.ecommerce_service]
+    ),
+    vector_store: VectorStoreInterface = Depends(
+        Provide[Container.product_vector_store]
+    ),
 ):
     products = ecommerce_service.get_all_products()
     try:
@@ -32,7 +37,10 @@ async def sync_products_vector_store(
 
 
 @router.get("/products", response_model=List[ProductResponse])
-def get_products(
-    ecommerce_service: EcommerceServiceInterface = Depends(get_ecommerce_service),
+@inject
+async def get_products(
+    ecommerce_service: EcommerceServiceInterface = Depends(
+        Provide[Container.ecommerce_service]
+    ),
 ):
     return ecommerce_service.get_all_products()
