@@ -1,10 +1,12 @@
+from typing import Annotated
+
 from dependency_injector.wiring import Provide, inject
-from fastapi import APIRouter, Depends, File, UploadFile
+from fastapi import APIRouter, Depends, File, Form, UploadFile
 
 from app.api.dependencies.containers import Container
 from app.core.chatbot import ChatbotInterface
 from app.core.image_analyzer import ImageAnalyzerInterface
-from app.schemas.chat import ChatRequest, ChatResponse, ImageAnalysisResponse
+from app.schemas.chat import ChatResponse, ImageAnalysisResponse
 
 router = APIRouter()
 
@@ -16,18 +18,19 @@ def response_formatter(response: str):
 
 @router.post("/chat", response_model=ChatResponse)
 @inject
-def chat(
-    chat_request: ChatRequest,
+async def chat(
+    message: Annotated[str, Form()],
+    file: UploadFile = File(...),
     chatbot: ChatbotInterface = Depends(Provide[Container.crop_disease_chatbot]),
     image_analyzer: ImageAnalyzerInterface = Depends(Provide[Container.image_analyzer]),
 ):
     """
     Send a message to the chatbot and get a response.
     """
-    user_prompt = chat_request.message
-    if chat_request.file:
-        image_analysis = image_analyzer.analyze(chat_request.file)
-        user_prompt += f"Image analysis: {image_analysis}"
+    user_prompt = message
+    if file:
+        image_analysis = await image_analyzer.analyze(file)
+        user_prompt += f"\nImage analysis: {image_analysis}"
     response = chatbot.send_message(user_prompt)
     formatted_response = response_formatter(response)
     return ChatResponse(message=formatted_response)
