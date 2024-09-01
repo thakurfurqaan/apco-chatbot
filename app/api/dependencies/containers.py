@@ -61,7 +61,7 @@ class Container(containers.DeclarativeContainer):
         persist_directory=config.CHROMA_DB_PATH,
     )
 
-    # AI client
+    # LangChain AI client
     _context_constructor = providers.Factory(
         DefaultContextConstructor,
         vector_store=langchain_product_vector_store,
