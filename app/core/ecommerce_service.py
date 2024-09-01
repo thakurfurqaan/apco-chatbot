@@ -9,4 +9,5 @@ class EcommerceServiceInterface(ABC):
 
     @abstractmethod
     def get_all_products(self) -> List[Product]:
+        """Get all products."""
         pass

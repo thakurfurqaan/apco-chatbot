@@ -12,8 +12,14 @@ class ConversationManager:
         self.ecommerce_service = ecommerce_service
 
     def process_text_input(self, message: str) -> str:
-        response = self.ai_client.generate_response(message)
-        return self._format_response(response)
+        """
+        Process a text input and generate a response.
 
-    def _format_response(self, response: str) -> str:
+        Args:
+            message (str): The message to process.
+
+        Returns:
+            str: The response from the AI client.
+        """
+        response = self.ai_client.generate_response(message)
         return response

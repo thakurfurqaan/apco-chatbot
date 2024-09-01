@@ -23,6 +23,8 @@ from app.services.vector_store.chroma_vector_store import ChromaVectorStore
 
 
 class Container(containers.DeclarativeContainer):
+    """Container for the application."""
+
     config = providers.Configuration()
     json_config = settings.model_dump(mode="json")
     config.from_dict(json_config)

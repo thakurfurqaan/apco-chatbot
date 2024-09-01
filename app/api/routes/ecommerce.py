@@ -21,6 +21,9 @@ async def sync_products_vector_store(
         Provide[Container.product_vector_store]
     ),
 ):
+    """
+    Sync the products in the vector store with the products in the ecommerce service.
+    """
     products = ecommerce_service.get_all_products()
     try:
         vector_store.add_items(
@@ -43,4 +46,7 @@ async def get_products(
         Provide[Container.ecommerce_service]
     ),
 ):
+    """
+    Get all products.
+    """
     return ecommerce_service.get_all_products()

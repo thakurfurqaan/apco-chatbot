@@ -9,4 +9,10 @@ class EcommerceMockService(EcommerceServiceInterface):
     """Mock implementation of EcommerceService for testing."""
 
     def get_all_products(self) -> List[Product]:
+        """
+        Get all products.
+
+        Returns:
+            List[Product]: The list of products.
+        """
         return [Product(**product) for product in products_data_mock.get_all_products()]

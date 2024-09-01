@@ -19,14 +19,17 @@ def chat(
     request: ChatRequest,
     chatbot: ChatbotInterface = Depends(Provide[Container.crop_advisor_chatbot]),
 ):
+    """
+    Send a message to the chatbot and get a response.
+    """
     response = chatbot.send_message(request.message)
     formatted_response = response_formatter(response)
     return ChatResponse(message=formatted_response)
 
 
-@router.post("/chat/upload-image")
+@router.post("/chat/analyze-image")
 @inject
-async def upload_image(
+async def analyze_image(
     file: UploadFile = File(...),
     chatbot: ChatbotInterface = Depends(Provide[Container.crop_advisor_chatbot]),
 ):
