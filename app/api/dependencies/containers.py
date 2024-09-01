@@ -11,7 +11,11 @@ from app.config import settings
 from app.core.ai_client import AIClientInterface
 from app.core.conversation_manager import ConversationManager
 from app.prompts.crop_advisor_prompt import template
-from app.services.ai_client.langchain.client import LangChainClientBuilder
+from app.services.ai_client.langchain.client import (
+    DefaultContextConstructor,
+    DefaultRAGChainCreator,
+    LangChainClient,
+)
 from app.services.ai_client.langchain.formatters import default_retriever_formatter
 from app.services.chatbot.crop_advisor_chatbot import CropAdvisorChatbot
 from app.services.ecommerce.ecommerce_mock.ecommerce_mock import EcommerceMockService
@@ -55,6 +59,26 @@ class Container(containers.DeclarativeContainer):
         persist_directory=config.CHROMA_DB_PATH,
     )
 
+    # AI client
+    _context_constructor = providers.Factory(
+        DefaultContextConstructor,
+        vector_store=langchain_product_vector_store,
+        retriever_formatter=retriever_formatter,
+    )
+    _rag_chain_creator = providers.Factory(
+        DefaultRAGChainCreator,
+        context_constructor=_context_constructor,
+        runnable=runnable,
+        prompt_template=prompt_template,
+        llm=llm,
+        output_parser=output_parser,
+    )
+    ai_client: providers.Provider[AIClientInterface] = providers.Factory(
+        LangChainClient,
+        context_constructor=_context_constructor,
+        rag_chain_creator=_rag_chain_creator,
+    )
+
     # Vector store
     product_vector_store = providers.Singleton(
         ChromaVectorStore,
@@ -66,32 +90,11 @@ class Container(containers.DeclarativeContainer):
     # Ecommerce service
     ecommerce_service = providers.Singleton(EcommerceMockService)
 
-    # AI client
-    def build_langchain_client(pvs, rf, l, pt, r, op):
-        return (
-            LangChainClientBuilder()
-            .with_retriever(pvs.as_retriever())
-            .with_retriever_formatter(rf)
-            .with_prompt_template(pt)
-            .with_llm(l)
-            .with_runnable(r)
-            .with_output_parser(op)
-            .build()
-        )
-
-    ai_client: providers.Provider[AIClientInterface] = providers.Factory(
-        build_langchain_client,
-        pvs=langchain_product_vector_store,
-        rf=retriever_formatter,
-        l=llm,
-        pt=prompt_template,
-        r=runnable,
-        op=output_parser,
-    )
-
     # Conversation manager
     conversation_manager = providers.Singleton(
-        ConversationManager, ai_client=ai_client, ecommerce_service=ecommerce_service
+        ConversationManager,
+        ai_client=ai_client,
+        ecommerce_service=ecommerce_service,
     )
 
     # Crop advisor chatbot
