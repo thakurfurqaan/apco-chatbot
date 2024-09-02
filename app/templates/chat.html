@@ -181,6 +181,15 @@
       background-color: transparent;
       position: relative;
     }
+
+    .chat-description {
+      text-align: center;
+
+      color: #888;
+
+      margin-top: 20px;
+
+    }
   </style>
 </head>
 
@@ -199,6 +208,10 @@
   </div>
   <div class="chat-container">
     <div id="chat-messages" class="chat-messages">
+      <div id="chat-description" class="chat-description">
+        Welcome to the Crop Disease Advisor chatbot. Ask me about crops, soil, diseases, pests, or products.
+
+      </div>
       <!-- Chat messages will be displayed here -->
     </div>
 
@@ -249,6 +262,16 @@
   const syncProductsButton = document.getElementById("sync-products");
   const loadingIndicator = document.getElementById("loading-indicator");
   const imagePreview = document.getElementById("image-preview");
+  const chatDescription = document.getElementById("chat-description");
+
+  function toggleDescription() {
+
+    if (chatMessages.children.length > 1) {
+      chatDescription.style.display = "none";
+    } else {
+      chatDescription.style.display = "block";
+    }
+  }
 
   fileInput.addEventListener("change", (e) => {
     const file = e.target.files[0];
@@ -326,12 +349,13 @@
     let messageContent = `<pre style="white-space: pre-wrap; overflow: hidden;">${formatToHTML(message)}</pre>`;
 
     if (file) {
-      messageContent += `<br><strong>Uploaded file:</strong><br><img src="${URL.createObjectURL(file)}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 10px; border: 2px solid #ffffff; margin-top: 10px;">`;
+      messageContent += `<br><img src="${URL.createObjectURL(file)}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 10px; border: 2px solid #ffffff; margin-top: 10px;">`;
     }
 
     messageElement.innerHTML = messageContent;
     chatMessages.appendChild(messageElement);
     chatMessages.scrollTop = chatMessages.scrollHeight;
+    toggleDescription();
   }
 
   function formatToHTML(text) {
@@ -349,6 +373,8 @@
     document.querySelector('button[type="submit"]').disabled = disabled;
     document.getElementById("file-input-label").style.pointerEvents = disabled ? "none" : "auto";
   }
+
+  toggleDescription();
 </script>
 </body>
 
