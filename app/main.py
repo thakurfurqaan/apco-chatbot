@@ -14,7 +14,6 @@ def create_app() -> FastAPI:
     container = Container()
     container.wire(modules=[ecommerce, chat])
     app = FastAPI()
-    app.container = container
     app.include_router(chat.router)
     app.include_router(ecommerce.router)
     return app
@@ -32,6 +31,7 @@ configure_logging()
 app = create_app()
 
 
+# For demo purposes
 @app.get("/", response_class=HTMLResponse)
 async def chat_page(request: Request):
     return templates.TemplateResponse("chat.html", {"request": request})
