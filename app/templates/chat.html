@@ -15,7 +15,7 @@
       background-color: #24252d;
       color: #343541;
       padding: 20px;
-
+      padding-top: 10px;
     }
 
     .chat-container {
@@ -178,11 +178,8 @@
     }
 
     .image-preview-container {
-      position: absolute;
-      bottom: 100%;
-      left: 50%;
-      transform: translateX(-50%);
-      margin-bottom: 10px;
+      background-color: transparent;
+      position: relative;
     }
   </style>
 </head>
@@ -204,6 +201,7 @@
     <div id="chat-messages" class="chat-messages">
       <!-- Chat messages will be displayed here -->
     </div>
+
     <div class="container">
       <div class="row justify-content-center align-items-center">
         <div class="chat-input">
@@ -250,7 +248,6 @@
   const chatMessages = document.getElementById("chat-messages");
   const syncProductsButton = document.getElementById("sync-products");
   const loadingIndicator = document.getElementById("loading-indicator");
-
   const imagePreview = document.getElementById("image-preview");
 
   fileInput.addEventListener("change", (e) => {
@@ -268,15 +265,20 @@
     }
   });
 
+  imagePreview.addEventListener("click", () => {
+    fileInput.value = "";
+    imagePreview.style.display = "none";
+    imagePreview.src = "";
+  });
+
   chatForm.addEventListener("submit", async (e) => {
     e.preventDefault();
     const message = userInput.value.trim();
     const file = fileInput.files[0];
     if (message || file) {
-      appendMessage("You", message, "user-message");
-      if (file) {
-        appendMessage("You", `Uploaded file: ${file.name}`, "user-message");
-      }
+      appendMessage("You", message, "user-message", file);
+      imagePreview.style.display = "none";
+      imagePreview.src = "";
       userInput.value = "";
       fileInput.value = "";
       loadingIndicator.style.display = "block";
@@ -289,8 +291,6 @@
       } finally {
         loadingIndicator.style.display = "none";
         toggleInputs(false);
-        imagePreview.style.display = "none";
-        imagePreview.src = "";
       }
     }
   });
@@ -319,10 +319,17 @@
     return response.json();
   }
 
-  function appendMessage(sender, message, className) {
+  function appendMessage(sender, message, className, file) {
     const messageElement = document.createElement("div");
     messageElement.className = `message ${className}`;
-    messageElement.innerHTML = `<pre style="white-space: pre-wrap; overflow: hidden;">${formatToHTML(message)}</pre>`;
+
+    let messageContent = `<pre style="white-space: pre-wrap; overflow: hidden;">${formatToHTML(message)}</pre>`;
+
+    if (file) {
+      messageContent += `<br><strong>Uploaded file:</strong><br><img src="${URL.createObjectURL(file)}" style="width: 100px; height: 100px; object-fit: cover; border-radius: 10px; border: 2px solid #ffffff; margin-top: 10px;">`;
+    }
+
+    messageElement.innerHTML = messageContent;
     chatMessages.appendChild(messageElement);
     chatMessages.scrollTop = chatMessages.scrollHeight;
   }
