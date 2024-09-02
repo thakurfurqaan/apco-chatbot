@@ -10,25 +10,34 @@ from app.api.routes import chat, ecommerce
 templates = Jinja2Templates(directory="app/templates")
 
 
-def create_app() -> FastAPI:
-    container = Container()
-    container.wire(modules=[ecommerce, chat])
-    app = FastAPI()
-    app.include_router(chat.router)
-    app.include_router(ecommerce.router)
-    return app
+class Application:
+    @staticmethod
+    def create_container() -> Container:
+        container = Container()
+        container.wire(modules=[ecommerce, chat])
+        return container
+
+    @staticmethod
+    def create_app() -> FastAPI:
+        app = FastAPI()
+        app.include_router(chat.router)
+        app.include_router(ecommerce.router)
+        return app
 
 
-def configure_logging():
-    logging.basicConfig(
-        level=logging.INFO,
-        format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
-        datefmt="%Y-%m-%d %H:%M:%S",
-    )
+class LoggerConfigurator:
+    @staticmethod
+    def configure_logging():
+        logging.basicConfig(
+            level=logging.INFO,
+            format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
+            datefmt="%Y-%m-%d %H:%M:%S",
+        )
 
 
-configure_logging()
-app = create_app()
+LoggerConfigurator.configure_logging()
+app = Application.create_app()
+container = Application.create_container()
 
 
 # For demo purposes

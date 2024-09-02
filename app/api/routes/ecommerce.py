@@ -1,3 +1,4 @@
+import logging
 from typing import List
 
 from dependency_injector.wiring import Provide, inject
@@ -9,6 +10,7 @@ from app.core.vector_store import VectorStoreInterface
 from app.schemas.ecommerce import ProductResponse
 
 router = APIRouter()
+logger = logging.getLogger(__name__)
 
 
 @router.post("/products/sync")
@@ -34,8 +36,10 @@ async def sync_products_vector_store(
                 for product in products
             ],
         )
+        logger.info("Successfully updated products in the vector store")
         return {"message": "Successfully updated products in the vector store"}
     except Exception as e:
+        logger.error(f"Error updating products in the vector store: {e}")
         raise HTTPException(status_code=500, detail=str(e))
 
 
@@ -49,4 +53,9 @@ async def get_products(
     """
     Get all products.
     """
-    return ecommerce_service.get_all_products()
+    try:
+        products = ecommerce_service.get_all_products()
+        return products
+    except Exception as e:
+        logger.error(f"Error fetching products: {e}")
+        raise HTTPException(status_code=500, detail="Internal Server Error")
